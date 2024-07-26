@@ -58,3 +58,5 @@ export interface IThreeCanvasInitOpts {
   // if no parent, just initialize, attach parent latter
   parent?: HTMLElement | "body";
 }
+
+export const threeCanvas = new ThreeCanvas(); // remenber to init when if needed
