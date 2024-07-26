@@ -37,6 +37,9 @@ export const ModelPreview: FC<ModelPreviewProps> = (props) => {
     mirrorY: () => {
       threeCanvas.mirrorY();
     },
+    getSkin: () => {
+      threeCanvas.downloadTexture();
+    },
   };
 
   return (

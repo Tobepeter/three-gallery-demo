@@ -37,7 +37,7 @@ export class ThreeCanvas {
   scene: Scene;
 
   glbUrl = '';
-  model: Object3D | null = null;
+  model: Mesh | null = null; // NOTE: only support no hierarchy model
 
   orbit: OrbitControls;
   tfCtrl: TransformControls;
@@ -234,6 +234,20 @@ export class ThreeCanvas {
       return;
     }
     this.model.scale.y *= -1;
+  }
+
+  downloadTexture() {
+    if (!this.model) {
+      return;
+    }
+
+    const texture = (this.model.material as MeshBasicMaterial).map;
+    if (!texture) {
+      return;
+    }
+
+    const canvas = threeUtil.texture2Canvas(texture);
+    threeUtil.downloadCanvas(canvas, 'texture.png');
   }
 
   private render = () => {

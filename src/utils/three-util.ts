@@ -1,4 +1,4 @@
-import { Object3D } from 'three';
+import { Object3D, Texture } from 'three';
 import { GLTFExporter } from 'three/examples/jsm/Addons.js';
 
 class ThreeUtil {
@@ -20,6 +20,26 @@ class ThreeUtil {
       },
       { binary: true },
     );
+  }
+
+  texture2Canvas(texture: Texture) {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      const img = texture.image as HTMLImageElement;
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx.drawImage(img, 0, 0);
+    }
+    return canvas;
+  }
+
+  downloadCanvas(canvas: HTMLCanvasElement, name: string) {
+    const url = canvas.toDataURL('image/png');
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = name;
+    a.click();
   }
 }
 
