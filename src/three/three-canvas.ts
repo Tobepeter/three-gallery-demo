@@ -128,6 +128,7 @@ export class ThreeCanvas {
     });
   }
 
+  // TODO: use event-dispatcher
   checkHitModel(uiNorm: Vector2) {
     if (!this.model) return;
 
@@ -138,6 +139,10 @@ export class ThreeCanvas {
     this.rayCastSphere.raycast(rayCaster, intersects);
     const isHit = intersects.length > 0;
     this.tfCtrl.visible = isHit;
+  }
+
+  changeTfMode(mode: 'translate' | 'rotate' | 'scale') {
+    this.tfCtrl.setMode(mode);
   }
 
   loadModel(glbUrl: string) {

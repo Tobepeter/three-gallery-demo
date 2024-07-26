@@ -12,6 +12,8 @@ export const ModelPreview: FC<ModelPreviewProps> = (props) => {
     threeCanvas.loadModel(props.model);
   }, []);
 
+  const desc = 'use w, e, r to switch transform mode';
+
   return (
     <Modal
       open
@@ -25,8 +27,10 @@ export const ModelPreview: FC<ModelPreviewProps> = (props) => {
       style={{ minWidth: 800 }}
     >
       <div>
-        <div>Model</div>
-        <div style={{ height: '85vh' }} className="overflow-hidden" ref={canvasRootRef}></div>
+        <div className="text-xl">Model Viewer</div>
+        <div style={{ height: '85vh' }} className="overflow-hidden relative mt-2" ref={canvasRootRef}>
+          <div className="absolute top-2 left-2 text-white text-lg">{desc}</div>
+        </div>
       </div>
     </Modal>
   );

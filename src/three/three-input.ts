@@ -24,6 +24,7 @@ export class ThreeInput {
     canvas.addEventListener('mousemove', this.onPointerMove);
     canvas.addEventListener('mousedown', this.onPointerDown);
     canvas.addEventListener('mouseup', this.onPointerUp);
+    window.addEventListener('keydown', this.onKeydown);
   }
 
   unListen() {
@@ -31,6 +32,7 @@ export class ThreeInput {
     canvas.removeEventListener('mousemove', this.onPointerMove);
     canvas.removeEventListener('mousedown', this.onPointerDown);
     canvas.removeEventListener('mouseup', this.onPointerUp);
+    window.removeEventListener('keydown', this.onKeydown);
   }
 
   private onPointerMove = (event: MouseEvent) => {
@@ -39,6 +41,22 @@ export class ThreeInput {
   };
 
   private onPointerDown = (event: MouseEvent) => {};
+
+  private onKeydown = (event: KeyboardEvent) => {
+    switch (event.key) {
+      case 'w':
+        this.threeCanvas.changeTfMode('translate');
+        break;
+      case 'e':
+        this.threeCanvas.changeTfMode('rotate');
+        break;
+      case 'r':
+        this.threeCanvas.changeTfMode('scale');
+        break;
+      default:
+        break;
+    }
+  };
 
   private onPointerUp = (event: MouseEvent) => {
     this.mouseX = event.offsetX;
