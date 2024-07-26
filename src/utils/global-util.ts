@@ -15,8 +15,16 @@ import {
   Flex,
 } from "antd";
 import { sleep } from "./common-util";
+import { hmrOnce } from "./decorators";
+
+function enumerable(value: boolean) {
+  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+    descriptor.enumerable = value;
+  };
+}
 
 class GlobalUtil {
+  @hmrOnce
   init() {
     const map = {
       // -- react --

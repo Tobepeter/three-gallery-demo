@@ -1,3 +1,4 @@
+import { hmrOnce } from "@/utils/decorators";
 import { WebGLRenderer, WebGLRendererParameters } from "three";
 
 /**
@@ -11,6 +12,7 @@ export class ThreeCanvas {
   ctx: WebGL2RenderingContext;
   renderer: WebGLRenderer;
 
+  @hmrOnce
   init(params?: IThreeCanvasInitOpts) {
     const canvas = document.createElement("canvas");
     this.canvas = canvas;

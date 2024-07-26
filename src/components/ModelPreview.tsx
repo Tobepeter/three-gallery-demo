@@ -1,3 +1,3 @@
-export const ModelPreview: FC<IModelData> = () => {
+export const ModelPreview: FC<ModelData> = () => {
   return <></>;
 };
