@@ -24,6 +24,21 @@ export const ModelPreview: FC<ModelPreviewProps> = (props) => {
     threeCanvas.changeTfMode(event.target.value as TransformMode);
   };
 
+  const actions: Record<string, AnyFunction> = {
+    export: () => {
+      threeCanvas.export();
+    },
+    reset: () => {
+      threeCanvas.reset();
+    },
+    mirrorX: () => {
+      threeCanvas.mirrorX();
+    },
+    mirrorY: () => {
+      threeCanvas.mirrorY();
+    },
+  };
+
   return (
     <Modal
       open
@@ -40,8 +55,21 @@ export const ModelPreview: FC<ModelPreviewProps> = (props) => {
         <div className="text-xl">Model Viewer</div>
         <div style={{ height: '85vh' }} className="overflow-hidden relative mt-2" ref={canvasRootRef}>
           {/* <div className="absolute top-2 left-2 text-white text-lg">{desc}</div> */}
+
+          {/* transform mode controls */}
           <div className="absolute top-4 left-4">
             <Radio.Group options={options} defaultValue={'translate'} optionType="button" onChange={onModeChange} />;
+          </div>
+
+          {/* actions */}
+          <div className="absolute top-4 right-4">
+            <Space direction="vertical">
+              {Object.entries(actions).map(([key, action]) => (
+                <Button key={key} onClick={action}>
+                  {key}
+                </Button>
+              ))}
+            </Space>
           </div>
         </div>
       </div>

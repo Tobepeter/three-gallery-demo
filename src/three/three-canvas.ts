@@ -206,10 +206,34 @@ export class ThreeCanvas {
     this.resize();
   }
 
+  reset() {
+    this.resetCamera();
+
+    if (this.model) {
+      this.model.position.set(0, 0, 0);
+      this.model.scale.set(1, 1, 1);
+      this.model.rotation.set(0, 0, 0);
+    }
+  }
+
   resetCamera() {
     const camera = this.camera;
     camera.position.set(0, 0, 2);
     camera.lookAt(0, 0, 0);
+  }
+
+  mirrorX() {
+    if (!this.model) {
+      return;
+    }
+    this.model.scale.x *= -1;
+  }
+
+  mirrorY() {
+    if (!this.model) {
+      return;
+    }
+    this.model.scale.y *= -1;
   }
 
   private render = () => {
