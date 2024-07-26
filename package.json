@@ -3,6 +3,17 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "author": {
+    "name": "tobe",
+    "email": "583590744@qq.com"
+  },
+  "keywords": [
+    "three",
+    "react",
+    "typescript",
+    "vite",
+    "3d"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
