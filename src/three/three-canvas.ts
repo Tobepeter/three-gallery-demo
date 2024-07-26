@@ -11,8 +11,13 @@ import {
   Camera,
   Box3,
   AmbientLight,
+  Raycaster,
+  Vector2,
+  Intersection,
+  SphereGeometry,
 } from 'three';
-import { GLTFLoader, OrbitControls } from 'three/examples/jsm/Addons.js';
+import { GLTFLoader, OrbitControls, TransformControls } from 'three/examples/jsm/Addons.js';
+import { ThreeInput } from './three-input';
 
 /**
  * entry of threejs
@@ -21,6 +26,8 @@ import { GLTFLoader, OrbitControls } from 'three/examples/jsm/Addons.js';
  * - can be remounted by other react component to avoid frequent re-initialization
  */
 export class ThreeCanvas {
+  input = new ThreeInput(this);
+
   canvas: HTMLCanvasElement;
   renderer: WebGLRenderer;
 
@@ -31,7 +38,11 @@ export class ThreeCanvas {
   glbUrl = '';
   model: Object3D | null = null;
 
-  orbitControl: any;
+  orbit: OrbitControls;
+  tfCtrl: TransformControls;
+
+  rayCaster: Raycaster;
+  rayCastSphere: Mesh;
 
   private resizeDur = 200;
   private lastResizeTime = -1;
@@ -94,20 +105,52 @@ export class ThreeCanvas {
     // const cube = new Mesh(geometry, mtl);
     // scene.add(cube);
 
-    const orbitControls = new OrbitControls(camera, this.canvas);
-    orbitControls.enableDamping = true;
-    this.orbitControl = orbitControls;
+    this.addControl();
+    this.rayCaster = new Raycaster();
 
     this.renderer.setAnimationLoop(this.render);
   }
 
-  private addControl() {}
+  private addControl() {
+    const orbit = new OrbitControls(this.camera, this.canvas);
+    this.orbit = orbit;
+    orbit.enableDamping = true;
+
+    const tfCtrl = new TransformControls(this.camera, this.canvas);
+    this.tfCtrl = tfCtrl;
+    this.scene.add(tfCtrl);
+    tfCtrl.size = 0.75;
+    tfCtrl.space = 'world';
+
+    // disable orbitControls while using transformControls
+    tfCtrl.addEventListener('dragging-changed', function (event) {
+      orbit.enabled = !event.value;
+    });
+  }
+
+  checkHitModel(uiNorm: Vector2) {
+    if (!this.model) return;
+
+    const rayCaster = this.rayCaster;
+    rayCaster.setFromCamera(uiNorm, this.camera);
+    const intersects: Intersection[] = [];
+    // this.model.raycast(rayCaster, intersects);
+    this.rayCastSphere.raycast(rayCaster, intersects);
+    const isHit = intersects.length > 0;
+    this.tfCtrl.visible = isHit;
+  }
 
   loadModel(glbUrl: string) {
     if (this.glbUrl === glbUrl) {
       return;
     }
     this.glbUrl = glbUrl;
+
+    if (!glbUrl) {
+      this.scene.remove(this.model!);
+      this.model = null;
+      return;
+    }
 
     // TODO: notify loading state
 
@@ -130,6 +173,17 @@ export class ThreeCanvas {
       this.model = model;
       this.glbUrl = glbUrl;
       this.scene.add(model);
+
+      this.tfCtrl.attach(model);
+
+      // bounding shpere
+      model.geometry.computeBoundingSphere();
+      const boundingSphere = model.geometry.boundingSphere!;
+      const mtl = new MeshBasicMaterial({ color: 0xff0000, transparent: true, opacity: 0.5 });
+      const sphere = new Mesh(new SphereGeometry(boundingSphere.radius), mtl);
+      this.rayCastSphere = sphere;
+      sphere.position.copy(boundingSphere.center);
+      // this.scene.add(sphere);
     });
   }
 
@@ -139,18 +193,20 @@ export class ThreeCanvas {
   }
 
   private render = () => {
-    this.orbitControl.update();
+    this.orbit.update();
     this.renderer.render(this.scene, this.camera);
   };
 
   private listen() {
     // this.unlisten();
     window.addEventListener('resize', this.startResizeTimer);
+    this.input.listen();
   }
 
   private unlisten() {
     // TODO: no destroy yet
     window.removeEventListener('resize', this.startResizeTimer);
+    this.input.unListen();
   }
 
   private startResizeTimer = () => {
