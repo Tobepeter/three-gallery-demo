@@ -9,6 +9,7 @@ export const ModelPreview: FC<ModelPreviewProps> = (props) => {
 
   useEffect(() => {
     threeCanvas.setParent(canvasRootRef.current!);
+    threeCanvas.loadModel(props.model);
   }, []);
 
   return (

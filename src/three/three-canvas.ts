@@ -9,7 +9,10 @@ import {
   Mesh,
   WebGLRendererParameters,
   Camera,
+  Box3,
+  AmbientLight,
 } from 'three';
+import { GLTFLoader, OrbitControls } from 'three/examples/jsm/Addons.js';
 
 /**
  * entry of threejs
@@ -22,12 +25,24 @@ export class ThreeCanvas {
   renderer: WebGLRenderer;
 
   camera: PerspectiveCamera;
+  ambientLight: AmbientLight;
   scene: Scene;
+
+  glbUrl = '';
+  model: Object3D | null = null;
+
+  orbitControl: any;
 
   private resizeDur = 200;
   private lastResizeTime = -1;
   private resizeTimer = -1;
   private isWaitingResize = false;
+
+  isDefault = false;
+
+  constructor(isDefault = false) {
+    this.isDefault = isDefault;
+  }
 
   init(params?: IThreeCanvasInitOpts) {
     const rendererParams = { antialias: true, alpha: false, ...params?.rendererParams };
@@ -49,12 +64,16 @@ export class ThreeCanvas {
     this.resize();
 
     // for debug
-    const win = window as any;
-    win.canvas = canvas;
-    win.renderer = renderer;
-    win.camera = this.camera;
-    win.scene = this.scene;
-    win.gl = renderer.getContext();
+    if (this.isDefault) {
+      const win = window as any;
+      win.threeCanvas = this;
+      win.threeCanvas = this;
+      win.canvas = canvas;
+      win.renderer = renderer;
+      win.camera = this.camera;
+      win.scene = this.scene;
+      win.gl = renderer.getContext();
+    }
   }
 
   private setup() {
@@ -63,15 +82,55 @@ export class ThreeCanvas {
 
     const camera = new PerspectiveCamera();
     this.camera = camera;
-    camera.position.z = 5;
+    camera.position.z = 2;
     scene.add(camera);
 
-    const geometry = new BoxGeometry();
-    const mtl = new MeshBasicMaterial();
-    const cube = new Mesh(geometry, mtl);
-    scene.add(cube);
+    const ambientLight = new AmbientLight();
+    this.ambientLight = ambientLight;
+    scene.add(ambientLight);
+
+    // const geometry = new BoxGeometry();
+    // const mtl = new MeshBasicMaterial();
+    // const cube = new Mesh(geometry, mtl);
+    // scene.add(cube);
+
+    const orbitControls = new OrbitControls(camera, this.canvas);
+    orbitControls.enableDamping = true;
+    this.orbitControl = orbitControls;
 
     this.renderer.setAnimationLoop(this.render);
+  }
+
+  private addControl() {}
+
+  loadModel(glbUrl: string) {
+    if (this.glbUrl === glbUrl) {
+      return;
+    }
+    this.glbUrl = glbUrl;
+
+    // TODO: notify loading state
+
+    const loader = new GLTFLoader();
+    loader.load(glbUrl, (gltf) => {
+      // in case load another model before this one loaded
+      if (this.glbUrl !== glbUrl) return;
+
+      if (this.model) {
+        this.scene.remove(this.model);
+      }
+
+      const model = gltf.scene.children[0] as Mesh;
+      // TODO: make the best view of camera
+
+      // calc bounding
+      model.geometry.computeBoundingBox();
+      console.log('bounding', model.geometry.boundingBox);
+
+      this.model = model;
+      this.glbUrl = glbUrl;
+      this.scene.add(model);
+    });
   }
 
   setParent(parent: HTMLElement) {
@@ -80,6 +139,7 @@ export class ThreeCanvas {
   }
 
   private render = () => {
+    this.orbitControl.update();
     this.renderer.render(this.scene, this.camera);
   };
 
@@ -131,4 +191,4 @@ export interface IThreeCanvasInitOpts {
   parent?: HTMLElement | 'body';
 }
 
-export const threeCanvas = new ThreeCanvas(); // remenber to init when if needed
+export const threeCanvas = new ThreeCanvas(true); // remenber to init when if needed
