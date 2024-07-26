@@ -18,6 +18,7 @@ import {
 } from 'three';
 import { GLTFLoader, OrbitControls, TransformControls } from 'three/examples/jsm/Addons.js';
 import { ThreeInput } from './three-input';
+import { threeUtil } from '@/utils/three-util';
 
 /**
  * entry of threejs
@@ -93,8 +94,8 @@ export class ThreeCanvas {
 
     const camera = new PerspectiveCamera();
     this.camera = camera;
-    camera.position.z = 2;
     scene.add(camera);
+    this.resetCamera();
 
     const ambientLight = new AmbientLight();
     this.ambientLight = ambientLight;
@@ -141,8 +142,16 @@ export class ThreeCanvas {
     this.tfCtrl.visible = isHit;
   }
 
-  changeTfMode(mode: 'translate' | 'rotate' | 'scale') {
+  changeTfMode(mode: TransformMode) {
     this.tfCtrl.setMode(mode);
+    this.tfCtrl.visible = true;
+  }
+
+  export() {
+    if (!this.model) {
+      return;
+    }
+    threeUtil.exportGlb(this.model, 'model.glb');
   }
 
   loadModel(glbUrl: string) {
@@ -195,6 +204,12 @@ export class ThreeCanvas {
   setParent(parent: HTMLElement) {
     parent.appendChild(this.canvas);
     this.resize();
+  }
+
+  resetCamera() {
+    const camera = this.camera;
+    camera.position.set(0, 0, 2);
+    camera.lookAt(0, 0, 0);
   }
 
   private render = () => {

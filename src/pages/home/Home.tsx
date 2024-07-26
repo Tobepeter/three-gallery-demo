@@ -1,5 +1,6 @@
 import { ModelItem } from '@/components/ModelItem';
 import { ModelPreview } from '@/components/ModelPreview';
+import { CheckboxOptionType, Radio } from 'antd';
 
 export const Home: FC = () => {
   const mock_url = 'models/dog.webp';
