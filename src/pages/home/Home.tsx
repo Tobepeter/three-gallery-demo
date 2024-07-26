@@ -24,10 +24,11 @@ export const Home: FC = () => {
   });
 
   return (
-    <div className="p-3 bg-violet-400 min-h-lvh">
-      <Typography.Title>model gallery</Typography.Title>
+    // <div className="p-3 bg-violet-300 min-h-lvh">
+    <div className="p-3 bg-gradient-to-r from-violet-300 via-violet-400 to-violet-300 min-h-lvh">
+      <div className="text-3xl text-violet-900">model gallery</div>
       {/* TODO: add flex wrap anim when have time */}
-      <Flex wrap gap="small">
+      <Flex wrap style={{ marginTop: 12 }} gap="small">
         {data.map((item, idx) => (
           <ModelItem
             key={idx}

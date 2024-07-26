@@ -57,13 +57,13 @@ export const ModelPreview: FC<ModelPreviewProps> = (props) => {
       style={{ minWidth: 800 }}
     >
       <div>
-        <div className="text-xl">Model Viewer</div>
+        <div className="text-xl text-violet-900">Model Viewer</div>
         <div style={{ height: '85vh' }} className="overflow-hidden relative mt-2" ref={canvasRootRef}>
           {/* <div className="absolute top-2 left-2 text-white text-lg">{desc}</div> */}
 
           {/* transform mode controls */}
           <div className="absolute top-4 left-4">
-            <Radio.Group options={options} defaultValue={'translate'} optionType="button" onChange={onModeChange} />;
+            <Radio.Group options={options} defaultValue={'translate'} optionType="button" onChange={onModeChange} />
           </div>
 
           {/* actions */}
@@ -79,7 +79,7 @@ export const ModelPreview: FC<ModelPreviewProps> = (props) => {
 
           {/* desc */}
           <div className="absolute bottom-4 left-4">
-            <div className="text-white text-lg">drag to rotate</div>
+            <div className="text-violet-900 text-lg">drag to rotate</div>
           </div>
 
           {/* upload */}

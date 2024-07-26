@@ -62,6 +62,8 @@ export class ThreeCanvas {
     const rendererParams = { antialias: true, alpha: false, ...params?.rendererParams };
     const renderer = new WebGLRenderer(rendererParams);
     this.renderer = renderer;
+    // TODO: use theme token
+    renderer.setClearColor(0xddd6fe);
 
     const canvas = renderer.domElement;
     this.canvas = canvas;
