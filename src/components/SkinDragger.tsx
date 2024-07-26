@@ -10,9 +10,9 @@ export const SkinDragger: FC<SkinDraggerProps> = (props) => {
 
   return (
     <Dragger
-      style={{ width: 150, backgroundColor: 'white', opacity: 0.8 }}
+      style={{ width: 180, backgroundColor: 'white', opacity: 0.8 }}
       // name="file"
-      accept=".png,.jpg,.jpeg,.webp"
+      accept=".png,.jpg,.jpeg,.webp,.glb"
       customRequest={(options) => {
         props.onUpload?.(options.file as File);
       }}
@@ -26,7 +26,7 @@ export const SkinDragger: FC<SkinDraggerProps> = (props) => {
       <p className="ant-upload-drag-icon">
         <FileAddOutlined />
       </p>
-      <p className="ant-upload-text">change skin</p>
+      <p>change skin or glb</p>
       {/* TODO: maybe can add a iamge display to show it */}
     </Dragger>
   );

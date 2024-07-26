@@ -39,6 +39,7 @@ export class ThreeCanvas {
 
   glbUrl = '';
   model: Mesh | null = null; // NOTE: only support no hierarchy model
+  orinalTexture: Texture | null = null;
 
   orbit: OrbitControls;
   tfCtrl: TransformControls;
@@ -98,7 +99,7 @@ export class ThreeCanvas {
     scene.add(camera);
     this.resetCamera();
 
-    const ambientLight = new AmbientLight();
+    const ambientLight = new AmbientLight(0xffffff, 2);
     this.ambientLight = ambientLight;
     scene.add(ambientLight);
 
@@ -143,6 +144,7 @@ export class ThreeCanvas {
     this.tfCtrl.visible = isHit;
   }
 
+  // TODO: useing keyboard need reflect to UI
   changeTfMode(mode: TransformMode) {
     this.tfCtrl.setMode(mode);
     this.tfCtrl.visible = true;
@@ -155,7 +157,8 @@ export class ThreeCanvas {
     threeUtil.exportGlb(this.model, 'model.glb');
   }
 
-  loadModel(glbUrl: string) {
+  async loadModel(glbUrl: string) {
+    const isBlob = glbUrl.startsWith('blob:');
     if (this.glbUrl === glbUrl) {
       return;
     }
@@ -170,36 +173,53 @@ export class ThreeCanvas {
     // TODO: notify loading state
 
     const loader = new GLTFLoader();
-    loader.load(glbUrl, (gltf) => {
-      // in case load another model before this one loaded
-      if (this.glbUrl !== glbUrl) return;
 
-      if (this.model) {
-        this.scene.remove(this.model);
-      }
+    return new Promise<void>((resolve, reject) => {
+      loader.load(
+        glbUrl,
+        (gltf) => {
+          // in case load another model before this one loaded
+          if (this.glbUrl !== glbUrl) return;
+          const mesh = gltf.scene.children[0] as Mesh;
+          const mtl = mesh.material as MeshBasicMaterial;
 
-      const model = gltf.scene.children[0] as Mesh;
-      // TODO: make the best view of camera
-
-      // calc bounding
-      model.geometry.computeBoundingBox();
-      console.log('bounding', model.geometry.boundingBox);
-
-      this.model = model;
-      this.glbUrl = glbUrl;
-      this.scene.add(model);
-
-      this.tfCtrl.attach(model);
-
-      // bounding shpere
-      model.geometry.computeBoundingSphere();
-      const boundingSphere = model.geometry.boundingSphere!;
-      const mtl = new MeshBasicMaterial({ color: 0xff0000, transparent: true, opacity: 0.5 });
-      const sphere = new Mesh(new SphereGeometry(boundingSphere.radius), mtl);
-      this.rayCastSphere = sphere;
-      sphere.position.copy(boundingSphere.center);
-      // this.scene.add(sphere);
+          // do not record upload glb change
+          if (!isBlob) {
+            this.orinalTexture = mtl.map;
+          }
+          this.onModelAdd(mesh);
+          resolve();
+        },
+        undefined,
+        reject,
+      );
     });
+  }
+
+  private onModelAdd(model: Mesh) {
+    if (this.model) {
+      this.scene.remove(this.model);
+    }
+
+    this.resetCamera();
+
+    // TODO: make the best view of camera
+
+    // calc bounding
+    // model.geometry.computeBoundingBox();
+    // console.log('bounding', model.geometry.boundingBox);
+
+    this.model = model;
+    this.scene.add(model);
+    this.tfCtrl.attach(model);
+
+    // -- raycast touch --
+    model.geometry.computeBoundingSphere();
+    const boundingSphere = model.geometry.boundingSphere!;
+    const mtl = new MeshBasicMaterial({ color: 0xff0000, transparent: true, opacity: 0.5 });
+    const sphere = new Mesh(new SphereGeometry(boundingSphere.radius), mtl);
+    this.rayCastSphere = sphere;
+    sphere.position.copy(boundingSphere.center);
   }
 
   setParent(parent: HTMLElement) {
@@ -210,10 +230,14 @@ export class ThreeCanvas {
   reset() {
     this.resetCamera();
 
-    if (this.model) {
-      this.model.position.set(0, 0, 0);
-      this.model.scale.set(1, 1, 1);
-      this.model.rotation.set(0, 0, 0);
+    const model = this.model;
+    if (model) {
+      model.position.set(0, 0, 0);
+      model.scale.set(1, 1, 1);
+      model.rotation.set(0, 0, 0);
+
+      const mtl = model.material as MeshBasicMaterial;
+      mtl.map = this.orinalTexture;
     }
   }
 

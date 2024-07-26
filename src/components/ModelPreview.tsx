@@ -13,7 +13,6 @@ export const ModelPreview: FC<ModelPreviewProps> = (props) => {
 
   useEffect(() => {
     threeCanvas.setParent(canvasRootRef.current!);
-    threeCanvas.resetCamera();
     threeCanvas.loadModel(props.model);
   }, []);
 
@@ -95,6 +94,15 @@ export const ModelPreview: FC<ModelPreviewProps> = (props) => {
               </Button>
               <SkinDragger
                 onUpload={(file) => {
+                  const isGlb = file.name.endsWith('.glb');
+                  if (isGlb) {
+                    const url = URL.createObjectURL(file);
+                    threeCanvas.loadModel(url).then(() => {
+                      URL.revokeObjectURL(url);
+                    });
+                    return;
+                  }
+
                   // threeCanvas.loadTexture(file);
                   threeUtil.file2Texture(file).then((texture) => {
                     threeCanvas.changeSkin(texture);
