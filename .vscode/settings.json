@@ -1,7 +1,10 @@
 {
-    "editor.tabSize": 2,
-    "editor.insertSpaces": true,
-    "editor.formatOnSave": true,
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "diffEditor.codeLens": true,
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "diffEditor.codeLens": true,
+  "files.associations": {
+    "*.css": "tailwindcss"
+  }
 }
