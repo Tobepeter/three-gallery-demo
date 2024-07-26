@@ -2,6 +2,13 @@
 
 techique: vite react threejs tailwindcss ant-design
 
+how run the demo?
+
+```bash
+pnpm install;
+pnpm run dev;
+```
+
 # preview
 
 ![screenshot](docs/screenshot1.png)
