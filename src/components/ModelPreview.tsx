@@ -54,6 +54,7 @@ export const ModelPreview: FC<ModelPreviewProps> = (props) => {
       }}
       centered
       width="90vw"
+      // TODO: when the screen is small, content will slip out of the below the viewport
       style={{ minWidth: 800 }}
     >
       <div>
