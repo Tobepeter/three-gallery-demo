@@ -15,6 +15,7 @@ import {
   Vector2,
   Intersection,
   SphereGeometry,
+  Texture,
 } from 'three';
 import { GLTFLoader, OrbitControls, TransformControls } from 'three/examples/jsm/Addons.js';
 import { ThreeInput } from './three-input';
@@ -248,6 +249,16 @@ export class ThreeCanvas {
 
     const canvas = threeUtil.texture2Canvas(texture);
     threeUtil.downloadCanvas(canvas, 'texture.png');
+  }
+
+  changeSkin(texture: Texture) {
+    if (!this.model) {
+      return;
+    }
+
+    const mtl = this.model.material as MeshBasicMaterial;
+    mtl.map = texture;
+    mtl.needsUpdate = true;
   }
 
   private render = () => {

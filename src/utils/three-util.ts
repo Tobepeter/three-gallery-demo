@@ -41,6 +41,52 @@ class ThreeUtil {
     a.download = name;
     a.click();
   }
+
+  file2Image(file: File) {
+    return new Promise<HTMLImageElement>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.src = e.target?.result as string;
+        img.onload = () => {
+          resolve(img);
+        };
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  file2Texture(file: File) {
+    return new Promise<Texture>((resolve, reject) => {
+      this.file2Image(file).then((img) => {
+        const texture = new Texture(img);
+        texture.needsUpdate = true;
+        resolve(texture);
+      });
+    });
+  }
+
+  getChessboardCanvas() {
+    const canvas = document.createElement('canvas');
+    const width = 100;
+    const height = 100;
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext('2d')!;
+    const size = 2;
+    const widthCount = Math.ceil(width / size);
+    const heightCount = Math.ceil(height / size);
+
+    for (let i = 0; i < widthCount; i++) {
+      for (let j = 0; j < heightCount; j++) {
+        const isBlack = (i + j) % 2 === 0;
+        ctx.fillStyle = isBlack ? 'black' : 'white';
+        ctx.fillRect(i * size, j * size, size, size);
+      }
+    }
+    return canvas;
+  }
 }
 
 export const threeUtil = new ThreeUtil();

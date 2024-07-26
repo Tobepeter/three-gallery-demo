@@ -1,5 +1,8 @@
 import { threeCanvas } from '@/three/three-canvas';
-import { CheckboxOptionType, Radio, RadioChangeEvent } from 'antd';
+import { CheckboxOptionType, Radio, RadioChangeEvent, UploadProps } from 'antd';
+import { InboxOutlined } from '@ant-design/icons';
+import { SkinDragger } from './SkinDragger';
+import { threeUtil } from '@/utils/three-util';
 
 export type ModelPreviewProps = ModelData & {
   onClose?: () => void;
@@ -66,12 +69,38 @@ export const ModelPreview: FC<ModelPreviewProps> = (props) => {
 
           {/* actions */}
           <div className="absolute top-4 right-4">
-            <Space direction="vertical">
+            <Space direction="vertical" align="end">
               {Object.entries(actions).map(([key, action]) => (
                 <Button key={key} onClick={action}>
                   {key}
                 </Button>
               ))}
+            </Space>
+          </div>
+
+          {/* desc */}
+          <div className="absolute bottom-4 left-4">
+            <div className="text-white text-lg">drag to rotate</div>
+          </div>
+
+          {/* upload */}
+          <div className="absolute bottom-4 right-4">
+            <Space direction="vertical" align="end">
+              <Button
+                onClick={() => {
+                  threeUtil.downloadCanvas(threeUtil.getChessboardCanvas(), 'chessboard.png');
+                }}
+              >
+                demo skin
+              </Button>
+              <SkinDragger
+                onUpload={(file) => {
+                  // threeCanvas.loadTexture(file);
+                  threeUtil.file2Texture(file).then((texture) => {
+                    threeCanvas.changeSkin(texture);
+                  });
+                }}
+              />
             </Space>
           </div>
         </div>

@@ -1,6 +1,8 @@
 import { ModelItem } from '@/components/ModelItem';
 import { ModelPreview } from '@/components/ModelPreview';
-import { CheckboxOptionType, Radio } from 'antd';
+import { SkinDragger } from '@/components/SkinDragger';
+import { FileAddOutlined, FileOutlined, InboxOutlined } from '@ant-design/icons';
+import { CheckboxOptionType, Radio, UploadProps } from 'antd';
 
 export const Home: FC = () => {
   const mock_url = 'models/dog.webp';
