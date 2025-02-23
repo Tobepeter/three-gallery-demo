@@ -13,16 +13,16 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: 安装 pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
       - name: 设置 Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18.x'
           cache: 'pnpm'
-
-      - name: 安装 pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
 
       - name: 安装依赖
         run: pnpm install --frozen-lockfile
