@@ -4,6 +4,9 @@ import { Home } from "./pages/home/Home";
 // TODO: eslint(react-refresh/only-export-components)
 // export const router = createBrowserRouter([
 
+const baseUrl = import.meta.env.VITE_BASE_URL || '/'
+console.log('routes baseUrl', baseUrl)
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -22,7 +25,9 @@ const router = createBrowserRouter([
       },
     ],
   },
-]);
+], {
+  basename: baseUrl,
+});
 
 export const AppRouter = () => {
   return <RouterProvider router={router} />;
