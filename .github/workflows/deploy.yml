@@ -1,13 +1,13 @@
 on:
   push:
     branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
 concurrency:
   group: 'pages'
   cancel-in-progress: false
@@ -16,29 +16,32 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: 安装 pnpm
+      - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
           version: 8
 
-      - name: 设置 Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18.x'
+          node-version: '18'
           cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build
+        run: pnpm build
+        env:
+          VITE_BASE_URL: /three-gallery-demo/
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
-
-      - name: 安装依赖
-        run: pnpm install
-        # NOTE：老是有一个报错  ERR_PNPM_NO_LOCKFILE  Cannot install with "frozen-lockfile" because pnpm-lock.yaml is absent
-        # run: pnpm install --frozen-lockfile
-
-      - name: 构建项目
-        run: pnpm build
+        with:
+          enablement: true
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
