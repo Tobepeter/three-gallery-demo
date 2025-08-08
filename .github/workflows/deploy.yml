@@ -1,3 +1,5 @@
+name: Deploy to GitHub Pages
+
 on:
   push:
     branches: [main]
@@ -7,6 +9,8 @@ permissions:
   contents: read
   pages: write
   id-token: write
+  actions: read
+  repository-projects: write
 
 concurrency:
   group: 'pages'
@@ -40,8 +44,6 @@ jobs:
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
-        with:
-          enablement: true
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
